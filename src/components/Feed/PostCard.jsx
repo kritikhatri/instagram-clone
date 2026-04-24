@@ -56,14 +56,20 @@ export default function PostCard({ post }) {
 
       <div className="post-actions">
         <div className="post-actions-left">
-          <motion.div whileTap={{ scale: 0.8 }}>
-            <Heart
-              size={26}
-              strokeWidth={1.5}
-              className={`action-icon ${isLiked ? 'liked' : ''}`}
-              onClick={() => toggleLike(post.id)}
-            />
-          </motion.div>
+          <motion.div
+              whileTap={{ scale: 0.7 }}
+              animate={{ scale: isLiked ? [1, 1.4, 1] : 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart
+                size={26}
+                strokeWidth={1.5}
+                fill={isLiked ? "red" : "none"}
+                color={isLiked ? "red" : "currentColor"}
+                className="action-icon"
+                onClick={() => toggleLike(post.id)}
+              />
+            </motion.div>
           <MessageCircle size={26} strokeWidth={1.5} className="action-icon" />
           <Send size={26} strokeWidth={1.5} className="action-icon" />
         </div>
@@ -79,7 +85,14 @@ export default function PostCard({ post }) {
       </div>
 
       <div className="post-likes">
-        {post.likes.toLocaleString()} likes
+        {isLiked ? (
+          <>
+            Liked by <strong>you</strong> and{" "}
+            {(post.likes).toLocaleString()} others
+          </>
+        ) : (
+          <>{post.likes.toLocaleString()} likes</>
+        )}
       </div>
 
       <div className="post-caption">
