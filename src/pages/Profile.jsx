@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 export default function Profile() {
   const { currentUser, posts, savedPostIds } = useData();
   const [activeTab, setActiveTab] = useState('posts');
+  const [selectedPost, setSelectedPost] = useState(null);
   
   // A profile should show posts made by the current user. 
   // In our mockDb, currentUser is antigravity_dev, but there aren't posts by them initially. Let's show all for demo, or mock it.
@@ -64,20 +65,58 @@ export default function Profile() {
       <div className="explore-grid">
         {displayPosts.length > 0 ? (
           displayPosts.map(p => (
-            <div key={p.id} className="explore-item">
+            <motion.div
+              key={p.id}
+              className="explore-item"
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setSelectedPost(p)}
+            >
               <img src={p.image} alt={p.caption} />
-              <div className="explore-item-overlay">
+              <motion.div
+                className="explore-item-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
                 <span>❤️ {p.likes}</span>
                 <span>💬 {p.comments ? p.comments.length : 0}</span>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))
         ) : (
-          <div style={{ padding: '40px', textAlign: 'center', gridColumn: 'span 3', color: 'var(--ig-text-secondary)' }}>
-            No posts found.
+          <div
+            style={{
+              padding: '40px',
+              textAlign: 'center',
+              gridColumn: 'span 3',
+              color: 'var(--ig-text-secondary)'
+            }}
+          >
+            {activeTab === 'saved'
+              ? "Save posts to view them here 🔖"
+              : "No posts yet"}
           </div>
         )}
       </div>
+      {selectedPost && (
+      <div
+        className="modal-overlay"
+        onClick={() => setSelectedPost(null)}
+      >
+        <div
+          className="modal-content"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <img src={selectedPost.image} alt="post" />
+          <div style={{ padding: "16px" }}>
+            <h4>{selectedPost.user.username}</h4>
+            <p>{selectedPost.caption}</p>
+          </div>
+        </div>
+      </div>
+    )}
     </motion.div>
   );
 }
